@@ -2,7 +2,32 @@
 #include <string>
 #include <limits>
 
+#include <vector>
+#include <random>
+#include <algorithm>
+
 int width_terminal{42};
+
+std::vector<char> letters{};
+std::vector<char> digits{};
+std::vector<char> symbols{};
+
+void AssignVectors() {
+	// Alphabet (uppercase and lowercase)
+	for (char c = 'a'; c <= 'z'; ++c) letters.push_back(c);
+	for (char c = 'A'; c <= 'Z'; ++c) letters.push_back(c);
+
+	// Numbers
+	for (char c = '0'; c <= '9'; ++c) digits.push_back(c);
+
+	// Symbols
+	symbols = {
+			'!', '@', '#', '$', '%', '^', '&', '*',
+			'(', ')', '-', '_', '=', '+', '[', ']',
+			'{', '}', ';', ':', ',', '.', '<', '>',
+			'/', '?', '|', '~'
+	};
+}
 
 void ClearInput() {
 	std::cin.clear();
@@ -47,7 +72,45 @@ int GetNonNegativeNumber() {
 	return input;
 }
 
-void GeneratePassword() {
+char GetRandomChar(
+	const std::vector<char>& characters,
+	std::mt19937& rng) {
+	std::uniform_int_distribution<int> dist(
+		0,
+		static_cast<int>(characters.size()) - 1
+	);
+	
+	return characters[dist(rng)];
+}
+
+std::string GeneratePassword(
+	int letters_number,
+	int digits_number,
+	int symbols_number) {
+	std::string generated_password{};
+
+	// Initialize random generator
+	std::random_device rd;
+	std::mt19937 rng { rd() };
+
+	for (int i = 0; i < letters_number; ++i) {
+		generated_password += GetRandomChar(letters, rng);
+	}
+
+	for (int i = 0; i < digits_number; ++i) {
+		generated_password += GetRandomChar(digits, rng);
+	}
+
+	for (int i = 0; i < symbols_number; ++i) {
+		generated_password += GetRandomChar(symbols, rng);
+	}
+
+	std::shuffle(generated_password.begin(), generated_password.end(), rng);
+
+	return generated_password;
+}
+
+void PasswordSetup() {
 	std::cout << "\nHow many letters?\n";
 	int letters_number{ GetNonNegativeNumber() };
 
@@ -64,14 +127,18 @@ void GeneratePassword() {
 		return;
 	}
 
+	std::string generated_password{
+		GeneratePassword(letters_number, digits_number, symbols_number)
+	};
 	std::cout << "\nPassword contains "
 						<< letters_number << " letters, "
 						<< digits_number << " digits and "
-						<< symbols_number << " symbols:\n";
+						<< symbols_number << " symbols:\n"
+						<< generated_password << "\n";
 }
 
 int main() {
-
+	AssignVectors();
 	TerminalIntro(width_terminal);
 	int menu_selection{};
 
@@ -80,7 +147,7 @@ int main() {
 		
 		switch (menu_selection) {
 		case 1:
-			GeneratePassword();
+			PasswordSetup();
 			break;
 		case 2:
 			std::cout << "\nGoodbye\n";
