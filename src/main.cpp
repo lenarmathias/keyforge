@@ -6,7 +6,8 @@
 #include <random>
 #include <algorithm>
 
-int width_terminal{42};
+const int width_terminal{ 42 };
+const int max_password_length{ 128 };
 
 std::vector<char> letters{};
 std::vector<char> digits{};
@@ -137,10 +138,18 @@ void PasswordSetup() {
 	std::cout << "\nHow many symbols?\n";
 	int symbols_number{ GetNonNegativeNumber() };
 
+	int password_length{ letters_number + digits_number + symbols_number };
+
 	if (letters_number == 0 &&
 		digits_number == 0 &&
 		symbols_number == 0) {
 		std::cout << "\nPassword can't be generated with no options.\n";
+		return;
+	}
+	else if (password_length > max_password_length) {
+		std::cout << "\nPassword too long, can't exceed "
+							<< max_password_length
+							<< " characters.\n";
 		return;
 	}
 
@@ -173,7 +182,7 @@ int main() {
 			std::cout << "\nInvalid choice\n";
 			break;
 		}
-	} while (menu_selection !=2);
+	} while (menu_selection != 2);
 
 	return 0;
 }
