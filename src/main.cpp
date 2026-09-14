@@ -83,6 +83,16 @@ char GetRandomChar(
 	return characters[dist(rng)];
 }
 
+void FillPasswordString(
+	int characters_number,
+	const std::vector<char>& characters,
+	std::string& generated_password,
+	std::mt19937& rng) {
+	for (int i = 0; i < characters_number; ++i) {
+		generated_password += GetRandomChar(characters, rng);
+	}
+}
+
 std::string GeneratePassword(
 	int letters_number,
 	int digits_number,
@@ -93,17 +103,24 @@ std::string GeneratePassword(
 	std::random_device rd;
 	std::mt19937 rng { rd() };
 
-	for (int i = 0; i < letters_number; ++i) {
-		generated_password += GetRandomChar(letters, rng);
-	}
-
-	for (int i = 0; i < digits_number; ++i) {
-		generated_password += GetRandomChar(digits, rng);
-	}
-
-	for (int i = 0; i < symbols_number; ++i) {
-		generated_password += GetRandomChar(symbols, rng);
-	}
+	FillPasswordString(
+		letters_number,
+		letters,
+		generated_password,
+		rng
+	);
+	FillPasswordString(
+		digits_number,
+		digits,
+		generated_password,
+		rng
+	);
+	FillPasswordString(
+		symbols_number,
+		symbols,
+		generated_password,
+		rng
+	);
 
 	std::shuffle(generated_password.begin(), generated_password.end(), rng);
 
