@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(keyforge
     src/main.cpp
+    src/application.cpp
     src/password_generator.cpp
     src/terminal_ui.cpp
 )
